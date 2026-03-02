@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { Habit } from 'features/habits/types/habit.types';
+import type { Habit } from 'features/habits/types';
 
 type HabitsState = {
   habits: Habit[];

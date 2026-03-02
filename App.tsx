@@ -1,1 +1,1 @@
-export { default } from 'app/AppRoot';
+export { AppRoot as default } from 'app';

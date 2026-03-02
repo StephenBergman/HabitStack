@@ -1,4 +1,4 @@
-import { AppProviders } from 'app/providers/AppProviders';
+import { AppProviders } from 'app/providers';
 import { HabitsScreen } from 'features/habits';
 
 export default function AppRoot() {

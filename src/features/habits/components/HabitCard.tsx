@@ -1,8 +1,8 @@
-import { Text, View } from 'react-native';
 import { CheckCircle, MapPin } from 'phosphor-react-native';
 
-import type { Habit } from 'features/habits/types/habit.types';
+import type { Habit } from 'features/habits/types';
 import { useAppTheme } from 'shared/theme';
+import { AppText, Card, Row, Stack } from 'shared/ui';
 
 type HabitCardProps = {
   habit: Habit;
@@ -12,33 +12,22 @@ export function HabitCard({ habit }: HabitCardProps) {
   const { theme } = useAppTheme();
 
   return (
-    <View
-      style={{
-        gap: 8,
-        borderRadius: 14,
-        padding: 14,
-        borderWidth: 1,
-        borderColor: theme.colors.border,
-        backgroundColor: theme.colors.surface,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.text }}>{habit.title}</Text>
-        <CheckCircle size={20} color={theme.colors.success} weight="fill" />
-      </View>
+    <Card>
+      <Stack gap={8}>
+        <Row justify="space-between">
+          <AppText variant="subtitle">{habit.title}</AppText>
+          <CheckCircle size={20} color={theme.colors.success} weight="fill" />
+        </Row>
 
-      <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-        <MapPin size={16} color={theme.colors.muted} />
-        <Text style={{ color: theme.colors.muted }}>{habit.triggerLabel}</Text>
-      </View>
+        <Row>
+          <MapPin size={16} color={theme.colors.muted} />
+          <AppText tone="muted">{habit.triggerLabel}</AppText>
+        </Row>
 
-      <Text style={{ fontWeight: '600', color: theme.colors.accent }}>{habit.streak} day streak</Text>
-    </View>
+        <AppText variant="label" tone="accent">
+          {habit.streak} day streak
+        </AppText>
+      </Stack>
+    </Card>
   );
 }

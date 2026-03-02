@@ -1,1 +1,3 @@
-export type { TriggerDefinition } from 'features/triggers/types/trigger.types';
+export { TriggerBadge } from 'features/triggers/components';
+export { shouldFireTrigger } from 'features/triggers/services';
+export type { TriggerDefinition, TriggerType } from 'features/triggers/types';

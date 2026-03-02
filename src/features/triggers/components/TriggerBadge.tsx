@@ -1,6 +1,7 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useAppTheme } from 'shared/theme';
+import { AppText } from 'shared/ui';
 
 type TriggerBadgeProps = {
   label: string;
@@ -19,7 +20,9 @@ export function TriggerBadge({ label }: TriggerBadgeProps) {
         backgroundColor: theme.colors.accentSoft,
       }}
     >
-      <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>{label}</Text>
+      <AppText tone="accent" variant="label">
+        {label}
+      </AppText>
     </View>
   );
 }
