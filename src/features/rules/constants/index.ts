@@ -1,3 +1,6 @@
+/**
+ * Rule constants public API.
+ */
 export {
   actionTypes,
   conditionTypes,

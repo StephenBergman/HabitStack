@@ -1,3 +1,6 @@
+/**
+ * All supported rule condition types.
+ */
 export const conditionTypes = [
   'location_enter',
   'location_exit',
@@ -14,6 +17,9 @@ export const conditionTypes = [
   'app_in_background',
 ] as const;
 
+/**
+ * Condition types that can initiate rule evaluation from external events.
+ */
 export const triggerConditionTypes = [
   'location_enter',
   'location_exit',
@@ -23,6 +29,9 @@ export const triggerConditionTypes = [
   'power_disconnected',
 ] as const;
 
+/**
+ * Condition types evaluated as additional constraints after a trigger event.
+ */
 export const guardConditionTypes = [
   'time_window',
   'day_of_week',
@@ -33,10 +42,19 @@ export const guardConditionTypes = [
   'app_in_background',
 ] as const;
 
+/**
+ * Supported automation action types.
+ */
 export const actionTypes = ['notify', 'open_url', 'log_event'] as const;
 
+/**
+ * Rule matching strategies.
+ */
 export const ruleMatchModes = ['all', 'any'] as const;
 
+/**
+ * Supported runtime context event types emitted by sensors/system state.
+ */
 export const contextEventTypes = [
   'location_enter',
   'location_exit',
@@ -49,6 +67,9 @@ export const contextEventTypes = [
   'time_tick',
 ] as const;
 
+/**
+ * Day labels used by weekly scheduling conditions.
+ */
 export const daysOfWeek = [
   'monday',
   'tuesday',

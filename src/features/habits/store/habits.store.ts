@@ -2,11 +2,17 @@ import { create } from 'zustand';
 
 import type { Habit } from 'features/habits/types';
 
+/**
+ * Local habits store state and actions.
+ */
 type HabitsState = {
   habits: Habit[];
   completeHabit: (id: string) => void;
 };
 
+/**
+ * Initial in-memory habits used for scaffold and UI development.
+ */
 const seedHabits: Habit[] = [
   {
     id: 'gym-checklist',
@@ -24,6 +30,10 @@ const seedHabits: Habit[] = [
   },
 ];
 
+/**
+ * Zustand store for habits.
+ * `completeHabit` increments streak for the matching habit id.
+ */
 export const useHabitsStore = create<HabitsState>((set) => ({
   habits: seedHabits,
   completeHabit: (id) =>

@@ -1,3 +1,7 @@
+/**
+ * Rule domain module public API.
+ * Re-exports constants, schemas, and inferred types for automation rules.
+ */
 export {
   actionTypes,
   conditionTypes,

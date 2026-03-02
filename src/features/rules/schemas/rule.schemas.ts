@@ -72,6 +72,9 @@ const appInBackgroundConditionSchema = conditionBaseSchema.extend({
   type: z.literal('app_in_background'),
 });
 
+/**
+ * Runtime-validated rule condition schema (discriminated by `type`).
+ */
 export const conditionSchema = z.discriminatedUnion('type', [
   locationConditionSchema,
   bluetoothConditionSchema,
@@ -107,12 +110,18 @@ const logEventActionSchema = actionBaseSchema.extend({
   message: z.string().min(1),
 });
 
+/**
+ * Runtime-validated action schema (discriminated by `type`).
+ */
 export const actionSchema = z.discriminatedUnion('type', [
   notifyActionSchema,
   openUrlActionSchema,
   logEventActionSchema,
 ]);
 
+/**
+ * Persisted automation rule schema.
+ */
 export const ruleSchema = z.object({
   id: idSchema,
   name: z.string().min(1),
@@ -126,12 +135,18 @@ export const ruleSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+/**
+ * Input schema for creating a new rule record.
+ */
 export const createRuleInputSchema = ruleSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
+/**
+ * Input schema for patching an existing rule record.
+ */
 export const updateRuleInputSchema = createRuleInputSchema.partial().extend({
   id: idSchema,
 });
@@ -173,6 +188,9 @@ const timeTickEventSchema = z.object({
   occurredAt: z.string().datetime(),
 });
 
+/**
+ * Normalized runtime event schema consumed by the evaluation engine.
+ */
 export const contextEventSchema = z.discriminatedUnion('type', [
   locationEventSchema,
   bluetoothEventSchema,
@@ -182,6 +200,9 @@ export const contextEventSchema = z.discriminatedUnion('type', [
   timeTickEventSchema,
 ]);
 
+/**
+ * Optional context values used while evaluating guards.
+ */
 export const contextSnapshotSchema = z.object({
   batteryLevelPercent: z.number().int().min(0).max(100).optional(),
   isCharging: z.boolean().optional(),
@@ -189,12 +210,18 @@ export const contextSnapshotSchema = z.object({
   nowIso: z.string().datetime().optional(),
 });
 
+/**
+ * Input payload schema for evaluating a single rule against current context.
+ */
 export const ruleEvaluationInputSchema = z.object({
   rule: ruleSchema,
   event: contextEventSchema,
   snapshot: contextSnapshotSchema.optional(),
 });
 
+/**
+ * Exported schema metadata for UI builders and form option lists.
+ */
 export const ruleSchemaMetadata = {
   actionTypes,
   contextEventTypes,

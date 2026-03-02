@@ -1,3 +1,6 @@
+/**
+ * Rule schemas public API.
+ */
 export {
   actionSchema,
   conditionSchema,

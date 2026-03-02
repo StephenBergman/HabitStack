@@ -1,3 +1,6 @@
+/**
+ * Rule type aliases public API.
+ */
 export type {
   ContextEvent,
   ContextSnapshot,
