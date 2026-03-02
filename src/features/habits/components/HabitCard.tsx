@@ -1,4 +1,4 @@
-import { CheckCircle, MapPin } from 'phosphor-react-native';
+import {  CheckCircleIcon, MapPinIcon } from 'phosphor-react-native';
 
 import type { Habit } from 'features/habits/types';
 import { useAppTheme } from 'shared/theme';
@@ -16,11 +16,11 @@ export function HabitCard({ habit }: HabitCardProps) {
       <Stack gap={8}>
         <Row justify="space-between">
           <AppText variant="subtitle">{habit.title}</AppText>
-          <CheckCircle size={20} color={theme.colors.success} weight="fill" />
+          <CheckCircleIcon size={20} color={theme.colors.success} weight="fill" />
         </Row>
 
         <Row>
-          <MapPin size={16} color={theme.colors.muted} />
+          <MapPinIcon size={16} color={theme.colors.muted} />
           <AppText tone="muted">{habit.triggerLabel}</AppText>
         </Row>
 
