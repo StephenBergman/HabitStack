@@ -1,12 +1,14 @@
 import { Text, View } from 'react-native';
 
-import { appColors } from 'shared/constants/colors';
+import { useAppTheme } from 'shared/theme';
 
 type TriggerBadgeProps = {
   label: string;
 };
 
 export function TriggerBadge({ label }: TriggerBadgeProps) {
+  const { theme } = useAppTheme();
+
   return (
     <View
       style={{
@@ -14,10 +16,10 @@ export function TriggerBadge({ label }: TriggerBadgeProps) {
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 999,
-        backgroundColor: appColors.accentSoft,
+        backgroundColor: theme.colors.accentSoft,
       }}
     >
-      <Text style={{ color: appColors.accent, fontWeight: '600' }}>{label}</Text>
+      <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>{label}</Text>
     </View>
   );
 }
