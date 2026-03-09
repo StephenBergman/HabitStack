@@ -1,1 +1,8 @@
-export { startLocationTriggers } from 'services/location/location.service';
+/**
+ * Location services public API.
+ */
+export {
+  onLocationTrigger,
+  startLocationTriggers,
+  stopLocationTriggers,
+} from 'services/location/location.service';
