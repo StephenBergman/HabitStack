@@ -59,7 +59,7 @@ npm run start -c
 ```text
 src/
   app/         # app root + providers
-  features/    # feature modules (habits, rules, engine, actions, sources)
+  features/    # feature modules (habits, rules, engine, actions, sources, permissions)
   services/    # integrations (location, notifications, supabase)
   shared/      # shared ui, constants, helpers
   store/       # app-wide stores

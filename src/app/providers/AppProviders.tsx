@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { RuntimePermissionsProvider } from 'app/providers/RuntimePermissionsProvider';
 import { ThemeProvider, useAppTheme } from 'shared/theme';
 
 type AppProvidersProps = {
@@ -22,10 +23,12 @@ function ThemedStatusBar() {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <ThemedStatusBar />
-        {children}
-      </ThemeProvider>
+      <RuntimePermissionsProvider>
+        <ThemeProvider>
+          <ThemedStatusBar />
+          {children}
+        </ThemeProvider>
+      </RuntimePermissionsProvider>
     </SafeAreaProvider>
   );
 }
