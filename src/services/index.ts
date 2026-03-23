@@ -1,3 +1,8 @@
 export { startLocationTriggers } from 'services/location';
-export { scheduleTriggerNotification } from 'services/notifications';
+export {
+  DEFAULT_NOTIFICATION_CHANNEL_ID,
+  ensureForegroundNotificationHandler,
+  ensureNotificationChannel,
+  scheduleTriggerNotification,
+} from 'services/notifications';
 export { supabase } from 'services/supabase';

@@ -1,6 +1,6 @@
 # HabitStack Progress Summary
 
-Last updated: March 9, 2026
+Last updated: March 23, 2026
 
 ## Project Goal
 Build a context-based automation app (if-this-then-that style) for mobile, focused on real-world triggers such as location, Bluetooth, charging state, and other device context.
@@ -118,25 +118,172 @@ Key files:
 - `src/services/location/location.service.ts` - I keep app-facing location wrappers here (`startLocationTriggers`, `stopLocationTriggers`, `onLocationTrigger`) so higher layers stay simple.
 - `App.tsx` - I import geofence task registration here at entrypoint so background task callbacks can resolve correctly.
 
+## 9) Current Phase: Minimal Automation Engine Evaluator (Implemented)
+- Implemented a concrete, event-driven automation engine in `features/automation-engine/services`.
+- Added trigger evaluation for:
+  - `location_enter`, `location_exit`
+  - `bluetooth_connected`, `bluetooth_disconnected`
+  - `power_connected`, `power_disconnected`
+- Added guard evaluation for:
+  - `time_window`
+  - `day_of_week`
+  - `cooldown_elapsed`
+  - plus snapshot-backed guards (`battery_above`, `battery_below`, `app_in_foreground`, `app_in_background`)
+- Added deterministic cooldown memory shape in engine contracts:
+  - input: `lastTriggeredAtByRuleId`
+  - output: `nextLastTriggeredAtByRuleId`
+- Added per-rule diagnostics (`matched`, `reason`) and dispatch queue generation for enabled actions.
+
+Key files:
+- `src/features/automation-engine/services/minimal-automation-engine.ts` - I implemented my first concrete evaluator here, including trigger matching, guard checks, cooldown handling, and dispatch queue output.
+- `src/features/automation-engine/services/index.ts` - I expose engine service implementations here.
+- `src/features/automation-engine/types/automation-engine.types.ts` - I added cooldown memory input/output typing here so evaluation remains deterministic.
+- `src/features/automation-engine/index.ts` - I export the concrete engine implementation from the feature public API here.
+
+## 10) Current Phase: Notify Action Handler + Android Channel Setup (Implemented)
+- Implemented concrete `notify` action execution via Expo local notifications.
+- Added Android notification channel provisioning for automation alerts.
+- Added a foreground notification presentation handler so in-app notifications surface while app is active.
+- Added in-memory action registry implementation for action-type-to-handler lookup and future runtime wiring.
+
+Key files:
+- `src/features/actions/handlers/notify-action.handler.ts` - I implemented a concrete `notify` action handler here that schedules local notifications from rule action payloads.
+- `src/features/actions/services/in-memory-action-registry.ts` - I implemented a runtime action registry here for registering and resolving handlers by action type.
+- `src/services/notifications/notifications.service.ts` - I replaced the placeholder with real notification handler/channel/scheduling logic here.
+- `src/features/actions/index.ts` - I export the new action handler and registry implementations from the feature public API here.
+
+## 11) Current Phase: Engine-to-Action Runtime Pipeline Utility (Implemented)
+- Added a reusable automation cycle runner that executes the full flow:
+  - `event -> engine.evaluate(...) -> dispatchQueue -> action handler execution`
+- Added source-event convenience wrapper so `ContextSourceEvent` payloads can run through the same pipeline in one call.
+- Added normalized action execution result output that includes:
+  - `ruleId`
+  - `actionType`
+  - handler execution `status/reason`
+- Added a helper to persist only cooldown memory between cycles.
+
+Key files:
+- `src/features/automation-engine/services/run-automation-cycle.ts` - I implemented pipeline orchestration here, including handler lookup and guarded execution.
+- `src/features/automation-engine/services/index.ts` - I export cycle runner utilities and related types here.
+- `src/features/automation-engine/index.ts` - I expose pipeline utilities from the feature public API here.
+
+## 12) Current Phase: Supabase Rule Persistence Layer (Implemented)
+- Added a concrete Supabase-backed rules repository in `features/rules/services`.
+- Implemented user-scoped CRUD and lifecycle operations:
+  - list rules
+  - get rule by id
+  - create rule
+  - update rule
+  - soft delete / restore
+- Added runtime cooldown persistence helpers backed by `automation_rule_runtime_state`:
+  - list runtime state
+  - map `ruleId -> lastTriggeredAt` for engine input
+  - single/bulk upsert for last-triggered timestamps
+- Added schema-validated DB-to-domain mapping (`ruleSchema`) and create/update input validation before writes.
+
+Key files:
+- `src/features/rules/services/rules.repository.ts` - I implemented Supabase user-scoped rule persistence and runtime state helpers here.
+- `src/features/rules/services/index.ts` - I export rule persistence services and types here.
+- `src/features/rules/index.ts` - I expose the new repository API from the rule module public surface here.
+
+## 13) Current Phase: Rules List Screen (Implemented)
+- Added a new `RulesListScreen` wired to real Supabase data via `listRules()`.
+- Implemented load states:
+  - initial loading
+  - manual refresh
+  - empty state
+  - recoverable error state with retry
+- Added rule cards showing:
+  - enabled/disabled status
+  - match mode
+  - priority
+  - condition/action counts
+  - updated timestamp
+- Wired app entrypoint to render the new Rules List screen.
+
+Key files:
+- `src/features/rules/screens/RulesListScreen.tsx` - I implemented the Supabase-backed rules list UI and state handling here.
+- `src/features/rules/screens/index.ts` - I export rules screens here.
+- `src/features/rules/index.ts` - I expose `RulesListScreen` from the rules module public API here.
+- `src/app/AppRoot.tsx` - I switched app launch screen to `RulesListScreen` here for immediate integration testing.
+
+## 14) Current Phase: Auth Screens + Session Gate (Implemented)
+- Added dedicated email/password auth screens using existing UI primitives:
+  - Login
+  - Register
+- Added auth feature service wrappers for Supabase auth operations:
+  - get current session
+  - subscribe to auth state changes
+  - sign in
+  - sign up
+  - sign out
+- Added app-level auth gate:
+  - when no session: show auth screens
+  - when session exists: show rules list
+  - includes auth loading/error states at boot
+
+Key files:
+- `src/features/auth/screens/AuthScreen.tsx` - I implemented the auth entry screen and login/register mode toggle here.
+- `src/features/auth/screens/LoginScreen.tsx` - I implemented the sign-in form UI/logic here.
+- `src/features/auth/screens/RegisterScreen.tsx` - I implemented the registration form UI/logic here.
+- `src/features/auth/services/auth.service.ts` - I implemented Supabase auth session/sign-in/sign-up/sign-out wrappers here.
+- `src/features/auth/index.ts` - I expose auth screens/services from one feature API surface here.
+- `src/app/AppRoot.tsx` - I implemented the runtime auth session gate and conditional screen rendering here.
+
+## 15) Current Phase: Rule Creation Screen + Bottom Navigation (Implemented)
+- Added a dedicated `CreateRuleScreen` for creating a basic automation rule backed by Supabase.
+- Implemented form inputs and validation for:
+  - rule name
+  - trigger type (power enter/exit, location enter/exit)
+  - geofence id (when location trigger is selected)
+  - notify title/body
+  - priority
+  - cooldown minutes
+- Added save flow wired to `createRule()` with:
+  - disabled submit until form parameters are valid
+  - success/error state feedback
+- Added a signed-in bottom navigation shell with two tabs:
+  - Rules
+  - Create
+- Wired successful create flow to return user to Rules tab.
+
+Key files:
+- `src/features/rules/screens/CreateRuleScreen.tsx` - I implemented rule creation UI/validation and Supabase create flow here.
+- `src/features/rules/screens/index.ts` - I export the new create screen here.
+- `src/features/rules/index.ts` - I expose `CreateRuleScreen` from the rules module API here.
+- `src/app/AuthenticatedAppShell.tsx` - I implemented bottom tab navigation and signed-in app shell here.
+- `src/app/AppRoot.tsx` - I switched authenticated app rendering to the new shell here.
+
 ## Current State: Implemented vs Scaffolded
 
 Implemented (working building blocks):
 - Theme + UI primitives
+- Auth screens + Supabase session gate
 - Rules schemas/types/contracts
+- Supabase-backed rules repository + runtime cooldown state persistence helpers
+- Rules List screen wired to Supabase rule listing
+- Rule creation screen wired to `createRule()`
+- Signed-in bottom navigation (Rules/Create tabs)
 - Permissions snapshot/request orchestration
 - Geofence source registration + normalization + service wrappers
+- Minimal automation engine evaluator (trigger + guard + cooldown)
+- `notify` action handler + Android channel setup
+- In-memory action registry
+- Reusable runtime cycle utility (`event -> engine -> action handlers`)
 
 Scaffolded (contracts only, runtime logic pending):
-- Automation engine evaluation implementation
-- Action execution implementations (notifications/open_url/log_event handlers)
+- `open_url` and `log_event` action handlers
 - Source registry implementation
+- App-level runtime wiring for continuous background event processing + action dispatch using persisted rules
 
 ## Next Steps
-1. Implement minimal automation engine evaluator (trigger + day/time/cooldown guards).
-2. Implement notification action handler (`notify`) and Android channel setup.
-3. Wire runtime pipeline: `context source event -> engine -> action handlers`.
-4. Add rule persistence/sync layer wiring (Supabase + local cache integration).
-5. Add debug/telemetry screen for trigger events and action executions.
+1. Add Rule Edit screen wired to `updateRule()` and integrate from Rules list row actions.
+2. Add Rule Delete/Restore actions wired to `softDeleteRule()` / `restoreRule()`.
+3. Add authenticated settings/logout affordance in primary app UI.
+4. Wire app-level runtime orchestration (subscribe live context sources, load active rules from Supabase, retain cooldown state between app sessions).
+5. Implement `open_url` and `log_event` action handlers.
+6. Add local cache sync layer (SQLite) on top of Supabase repository.
+7. Add debug/telemetry screen for trigger events and action executions.
 
 ## Notes / Constraints
 - Background capabilities differ by platform, especially for Bluetooth/power automation behavior.

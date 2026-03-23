@@ -1,6 +1,11 @@
 import type { ContextEvent, ContextSnapshot, Rule, RuleAction } from 'features/rules';
 
 /**
+ * Per-rule timestamp memory used for cooldown evaluations.
+ */
+export type RuleLastTriggeredAtById = Record<string, string>;
+
+/**
  * Input payload for a single engine evaluation cycle.
  */
 export type EngineEvaluateInput = {
@@ -8,6 +13,7 @@ export type EngineEvaluateInput = {
   event: ContextEvent;
   snapshot?: ContextSnapshot;
   nowIso?: string;
+  lastTriggeredAtByRuleId?: RuleLastTriggeredAtById;
 };
 
 /**
@@ -33,4 +39,5 @@ export type EngineRuleEvaluation = {
 export type EngineEvaluateOutput = {
   dispatchQueue: EngineDispatchItem[];
   evaluations: EngineRuleEvaluation[];
+  nextLastTriggeredAtByRuleId: RuleLastTriggeredAtById;
 };
